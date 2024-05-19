@@ -1,5 +1,6 @@
 package com.xxxx.springsecuritydemo.controller;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,6 +17,7 @@ public class LoginController {
      * 登录成功后post跳转至成功页
      * @return 跳转地址
      */
+    @Secured("ROLE_abc")
     @RequestMapping("/toMain")
     public String main(){
         return "redirect:main.html";

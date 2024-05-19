@@ -57,16 +57,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/edu/login.html").permitAll()
                 //允许用户账号访问特定页面（权限判断）；
 //                .antMatchers("/advance.html").hasAuthority("admiN") //判断单个权限，权限判断区分大小写
-               .antMatchers("/advance.html").hasAnyAuthority("admin","adminN") //判断多个权限
+//               .antMatchers("/advance.html").hasAnyAuthority("admin","adminN") //判断多个权限
                 //允许特定角色的用户访问特定页面
 //                .antMatchers("/advance.html").hasRole("abc!") //判断单个角色，去掉前缀ROLE_
 //                .antMatchers("/advance.html").hasAnyRole("abc,nne")//判断多个角色
                 //与直接使用hasAnyRole效果一样
-                .antMatchers("/advance.html").access("HasAnyRole('abc,nne')")
+//                .antMatchers("/advance.html").access("HasAnyRole('abc,nne')")
                 //允许特定IP访问特定页面
                 .antMatchers("/advance.html").hasIpAddress("127.0.0.1")
                 //所有请求都必须被认证
                 .anyRequest().authenticated();
+                //自定义权限认证实现
+//                .anyRequest().access("@myServiceImpl.hasPermisson(request,authentication)");
+
 
         http.exceptionHandling()
                 //自定义异常处理（以：403错误为例）
