@@ -1,6 +1,7 @@
 package com.xxxx.springsecuritydemo.controller;
 
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,7 +18,9 @@ public class LoginController {
      * 登录成功后post跳转至成功页
      * @return 跳转地址
      */
-    @Secured("ROLE_abc")
+//    @Secured("ROLE_abc") //注册需要增加ROLE_
+    // 允许ROLE_开头，也允许不使用ROLE_开头，比配置类更灵活
+    @PreAuthorize("hasAnyRole('abc')")
     @RequestMapping("/toMain")
     public String main(){
         return "redirect:main.html";
