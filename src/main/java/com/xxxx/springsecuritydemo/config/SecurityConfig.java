@@ -44,7 +44,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //授权认证
         http.authorizeRequests()
                 //登录页不用认证
-                .antMatchers("/login.html").permitAll()
+//                .antMatchers("/login.html").permitAll()
+                //与直接使用permitAll效果相同，
+                .antMatchers("/login.html").access("permitAll()")
                 //错误页不用认证
                 .antMatchers("/error.html").permitAll()
                 //静态资源文件放行
@@ -58,7 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                .antMatchers("/advance.html").hasAnyAuthority("admin","adminN") //判断多个权限
                 //允许特定角色的用户访问特定页面
 //                .antMatchers("/advance.html").hasRole("abc!") //判断单个角色，去掉前缀ROLE_
-                .antMatchers("/advance.html").hasAnyRole("abc,nne")//判断多个角色
+//                .antMatchers("/advance.html").hasAnyRole("abc,nne")//判断多个角色
+                //与直接使用hasAnyRole效果一样
+                .antMatchers("/advance.html").access("HasAnyRole('abc,nne')")
                 //允许特定IP访问特定页面
                 .antMatchers("/advance.html").hasIpAddress("127.0.0.1")
                 //所有请求都必须被认证
