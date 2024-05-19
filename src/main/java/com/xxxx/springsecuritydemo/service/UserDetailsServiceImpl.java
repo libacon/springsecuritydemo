@@ -25,6 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         //2. 把查询出的密码解析判断
         String password = pw.encode("123");
 
-        return new User(username,password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,normal"));
+        // 角色 ROLE_abc: abc为角色名称，而Security默认要求加上前缀ROLE_
+        return new User(username,password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,normal,ROLE_abc"));
     }
 }
