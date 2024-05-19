@@ -1,13 +1,15 @@
 package com.xxxx.springsecuritydemo.config;
 
+import com.xxxx.springsecuritydemo.handle.MyAccessDeniedHandler;
 import com.xxxx.springsecuritydemo.handle.MyAuthenticationFailureHandler;
-import com.xxxx.springsecuritydemo.handle.MyAuthenticationSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 /**
  * SpringSecurity 配置类
@@ -15,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    MyAccessDeniedHandler myAccessDeniedHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -50,13 +55,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/edu/login.html").permitAll()
                 //允许用户账号访问特定页面（权限判断）；
 //                .antMatchers("/advance.html").hasAuthority("admiN") //判断单个权限，权限判断区分大小写
-//                .antMatchers("/advance.html").hasAnyAuthority("admin","adminN") //判断多个权限
+               .antMatchers("/advance.html").hasAnyAuthority("admin","adminN") //判断多个权限
                 //允许特定角色的用户访问特定页面
 //                .antMatchers("/advance.html").hasRole("abc!") //判断单个角色，去掉前缀ROLE_
                 .antMatchers("/advance.html").hasAnyRole("abc,nne")//判断多个角色
+                //允许特定IP访问特定页面
+                .antMatchers("/advance.html").hasIpAddress("127.0.0.1")
                 //所有请求都必须被认证
                 .anyRequest().authenticated();
 
+        http.exceptionHandling()
+                //自定义异常处理（以：403错误为例）
+                .accessDeniedHandler(myAccessDeniedHandler);
         //关闭csrf防火墙
         http.csrf().disable();
 
