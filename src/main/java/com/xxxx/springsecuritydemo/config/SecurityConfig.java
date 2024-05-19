@@ -42,6 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login.html").permitAll()
                 //错误页不用认证
                 .antMatchers("/error.html").permitAll()
+                //静态资源文件放行
+                .antMatchers("/js/**","/css/**","/images/*").permitAll()
+                //任何目录下png后缀的文件都会被放行（正则表达式）
+//                .regexMatchers(".+[.]png").permitAll()
                 //所有请求都必须被认证
                 .anyRequest().authenticated();
 
