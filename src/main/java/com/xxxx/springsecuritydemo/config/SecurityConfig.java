@@ -2,6 +2,7 @@ package com.xxxx.springsecuritydemo.config;
 
 import com.xxxx.springsecuritydemo.handle.MyAccessDeniedHandler;
 import com.xxxx.springsecuritydemo.handle.MyAuthenticationFailureHandler;
+import com.xxxx.springsecuritydemo.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +10,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 /**
  * SpringSecurity 配置类
@@ -20,6 +24,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     MyAccessDeniedHandler myAccessDeniedHandler;
+
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private  DataSource dataSource;
+
+    @Autowired
+    private PersistentTokenRepository persistentTokenRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -77,11 +90,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //关闭csrf防火墙
         http.csrf().disable();
 
+        http.rememberMe()
+                //自定义登录逻辑
+                .userDetailsService(userDetailsService)
+                //设置过期时间60秒
+                .tokenValiditySeconds(60)
+                //持久层对象
+                .tokenRepository(persistentTokenRepository);
+
     }
 
     @Bean
     public PasswordEncoder getPw(){
         return  new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public PersistentTokenRepository  getPersistentTokenRepository(){
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        //引导DB库
+        jdbcTokenRepository.setDataSource(dataSource);
+        //第二次运行要注释掉，否则会表已存在的报错
+//        jdbcTokenRepository.setCreateTableOnStartup(true);
+        return  jdbcTokenRepository;
     }
 
 }
